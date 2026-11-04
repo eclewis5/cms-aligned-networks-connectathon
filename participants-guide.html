@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Providers, EHR vendors, payers, and apps | CMS Aligned Networks Connectathon</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<main class="page"><div class="doc">
+<div class="crumb"><a href="index.html">Connectathon</a> / Providers, EHR vendors, payers, and apps</div>
+<h1>Providers, EHR vendors, payers, and apps</h1>
+<p class="lede">You connect to a CMS aligned network, or build something that does. Join through your network, or bring your own endpoint and test it with the networks at the event.</p>
+<div class="notice"><p>The network-level scenarios are the focus of this event. Scenarios for provider, EHR, payer, and app responsibilities are <span class="tbd">TBD</span>. What each role would be expected to do, from the GA Requirements, is below so you can prepare.</p></div>
+
+<h2 id="providers">Providers</h2>
+<ul>
+  <li>Respond to treatment queries (provider to provider) with all clinical and claims data held, structured and unstructured, unless legally restricted.</li>
+  <li>Respond to patient access queries authenticated with a CMS-approved IAL2 credential, with no portal login and no extra HIPAA authorization.</li>
+  <li>Respond to payer queries for clinical data supporting claims from the last 60 days, and to quality queries (HQUALIMP) with the agreed measure data.</li>
+  <li>Honor agreed disclosure restrictions under 45 CFR 164.522.</li>
+  <li>Keep National Provider Directory information (endpoints and verification data) complete and current, directly or through your EHR vendor or network.</li>
+  <li>Provide audit event data to the network.</li>
+</ul>
+
+<h2 id="ehr-vendors">EHR vendors</h2>
+<ul>
+  <li>Accept IAL2 identity tokens and never require portal credentials for patient access requests.</li>
+  <li>Apply the CMS-approved patient matching logic.</li>
+  <li>Support FHIR query and response for patient access (PATRQT), treatment (TREAT), and payment (HPAYMT), delivering structured and unstructured data.</li>
+  <li>Integrate with the National Provider Directory to publish and to validate inbound requests.</li>
+  <li>Return payer clinical and quality query responses by query, not by proactive push.</li>
+  <li>Capture and provide audit events (who, when, Purpose of Use, network-side participant identity).</li>
+</ul>
+
+<h2 id="payers">Payers</h2>
+<ul>
+  <li>Respond to patient, provider, and payer queries for claims and benefit data, with no portal accounts, and by query rather than by proactive push.</li>
+  <li>Query providers for clinical data supporting claims from the last 60 days.</li>
+  <li>Query for measure-specific data under HQUALIMP.</li>
+  <li>Accept IAL2 identity for patient queries without portal login.</li>
+  <li>Publish endpoints, identity, and contact metadata to the National Provider Directory, and apply the CMS-approved patient matching logic.</li>
+  <li>Log requests and responses (who, when, Purpose of Use) and retain them for at least 7 years.</li>
+</ul>
+
+<h2 id="apps">Patient-facing apps</h2>
+<ul>
+  <li>Verify identity through a CMS-approved IAL2 credential service provider.</li>
+  <li>Register with CMS aligned networks using Dynamic Client Registration and a CMS-signed software statement (Medicare App Library apps).</li>
+  <li>Source clinical and claims data from at least one CMS aligned network, with no portal sign-in.</li>
+  <li>Store identity tokens, let patients set query specificity once and change it any time, and show audit logs for 7 years.</li>
+  <li>Meet the CARIN Code of Conduct and hold DirectTrust or DiME certification, plus any later CMS review.</li>
+  <li>Apps in the Kill the Clipboard, Conversational AI, and Diabetes/Obesity categories have additional requirements. See the GA Requirements.</li>
+</ul>
+</div></main>
+<script src="site.js"></script>
+</body>
+</html>

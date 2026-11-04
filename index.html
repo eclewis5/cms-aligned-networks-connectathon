@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CMS Aligned Networks Connectathon</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<main class="page"><div class="doc">
+
+<h1>CMS Aligned Networks Connectathon</h1>
+
+<p class="lede">The CMS Aligned Networks Connectathon is an online event in <strong>January 2027</strong> (<span class="tbd">exact date and time TBD</span>) where networks, providers, EHR vendors, payers, and app developers test the network-level requirements of the CMS Health Tech Ecosystem (HTE) General Availability (GA) Requirements against each other, and tell us what they found.</p>
+
+<div class="notice"><p><strong>Draft status.</strong> Scenarios are based on the GA Requirements draft dated for the July milestone. They will be rechecked against the current GA document before the event.</p></div>
+
+<h2 id="how-it-works">How the event works</h2>
+<ul>
+  <li><strong>What it's for.</strong> Real interoperability experience between CMS aligned networks, not a formal certification or conformance test. Participants run shared scenarios in pairs, and failures are as useful as passes because they often point to a gap in the requirements or an interoperability bug.</li>
+  <li><strong>Zoom.</strong> <span class="tbd">Meeting link TBD</span>. Everyone meets in the main room for the opening, the hourly check-ins, and the closing report-out.</li>
+  <li><strong>Slack.</strong> Questions, pairing, and links go in <span class="tbd">channel TBD</span> on the CMS Health Tech Ecosystem Slack.</li>
+  <li><strong>Breakout rooms.</strong> Two people debugging together can start a Slack huddle in a direct message. A larger group can open a video room and post the link in the channel.</li>
+  <li><strong>Only software and networks register.</strong> Teams bringing a network endpoint, client, or participant system register it (<a href="#how-to-test">How to test</a>). Everyone else just joins.</li>
+  <li><strong>Made-up data only.</strong> Every patient, record, and organization used in the scenarios is synthetic. Never use real health information, even your own.</li>
+</ul>
+
+<h2 id="schedule">Schedule</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>When</th><th>What</th></tr></thead>
+  <tbody>
+    <tr><td>Early December 2026 <span class="tbd">date TBD</span></td><td>Scenarios, test patients, and registration open.</td></tr>
+    <tr><td>Three weeks before the event <span class="tbd">date TBD</span></td><td>Participants register and publish their endpoints for self-serve testing. Dynamic Client Registration and directory test setups are ready.</td></tr>
+    <tr><td>One week before <span class="tbd">date TBD</span></td><td>Teams aim to have tried a first connection with at least one partner.</td></tr>
+    <tr><td>The event, January 2027 <span class="tbd">date and time TBD</span></td><td>Spent on the harder problems and live debugging. Some people will still be finishing basic setup, and that's fine.</td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="how-to-test">How to test</h2>
+<p>Participants bring one or more roles: a <strong>network</strong> (routes and answers queries across CMS aligned networks), a <strong>participant system</strong> (a provider, EHR, or payer endpoint that responds to or sends queries), or a <strong>patient-facing app</strong> (registers and queries on a patient's behalf). Make your component testable without you in the room, and list it in the <a href="directory.html">Participant directory</a> by <a href="register.html">registering</a>.</p>
+<p>Test early and alone against the reference test tools (<span class="tbd">tools TBD</span>), so the live event is left for problems that need two networks. Run each <a href="scenarios.html">scenario</a> with as many counterparts as you can reach, and <a href="#recording-results">record every run</a>.</p>
+
+<h2 id="ground-rules">Ground rules</h2>
+<ul>
+  <li><strong>One onboarding, accepted everywhere.</strong> Participants onboarded by one CMS aligned network must be accepted by the others without redundant onboarding. Networks may coordinate operations but must not add duplicate trust requirements.</li>
+  <li><strong>Dynamic Client Registration is the default.</strong> The GA allows manual registration only through October 1, 2026. For this event, register clients dynamically.</li>
+  <li><strong>Identity at IAL2 only.</strong> Patient-initiated queries use a CMS-approved IAL2 credential. No portal logins, and no extra identity steps beyond IAL2 token validation.</li>
+  <li><strong>Purpose of Use travels with every request.</strong> Every query declares one of the HL7 Purpose of Use codes: PATRQT, TREAT, HPAYMT, HOPERAT, or HQUALIMP.</li>
+  <li><strong>Patient matching uses the CMS-approved logic.</strong> If a query matches under any of the 27 combinations in the CMS patient matching proposal, the receiver must respond, subject to applicable law.</li>
+  <li><strong>Structured and unstructured data.</strong> Responses include USCDI v3 data and unstructured artifacts such as PDFs, scans, and images.</li>
+  <li><strong>Law still applies.</strong> HIPAA and other applicable law govern every response. Withholding is allowed only where law permits it.</li>
+</ul>
+
+<h2 id="minimum-scenarios">Minimum scenarios</h2>
+<p>Every network should pass these five scenarios. Record each run as a <a href="#recording-results">result</a>. Networks that pass them can go on to the advanced scenarios.</p>
+<div class="table-wrap"><table>
+  <thead><tr><th>Scenario</th><th>Tests GA requirement</th></tr></thead>
+  <tbody>
+    <tr><td><a href="scenarios.html#patient-matching">N1 Patient matching</a></td><td>Patient Matching</td></tr>
+    <tr><td><a href="scenarios.html#purpose-of-use">N2 Purpose of Use handling</a></td><td>Purpose of Use</td></tr>
+    <tr><td><a href="scenarios.html#dcr">N3 Dynamic Client Registration</a></td><td>Dynamic Client Registration</td></tr>
+    <tr><td><a href="scenarios.html#data-querying">N4 Data querying, structured and unstructured</a></td><td>Data Querying</td></tr>
+    <tr><td><a href="scenarios.html#audit">N5 Audit logging</a></td><td>Auditability</td></tr>
+  </tbody>
+</table></div>
+<p>Advanced scenarios (record location, National Provider Directory publishing, use-case response, and honoring disclosure restrictions) are on the <a href="scenarios.html#advanced">Scenarios page</a>.</p>
+
+<h2 id="recording-results">Recording results</h2>
+<p>Record each run on the <a href="results.html">Results page</a>: the networks involved, the scenario, pass or fail, and a note. Attach a screenshot, and where you can, the request and response. Reports on the Results page are public.</p>
+
+<h2 id="resources">Shared resources</h2>
+<div class="table-wrap"><table>
+  <thead><tr><th>Resource</th><th>Link</th></tr></thead>
+  <tbody>
+    <tr><td>Who is bringing what</td><td><a href="directory.html">Participant directory</a>; get listed with the <a href="register.html">registration form</a></td></tr>
+    <tr><td>Every scenario, with pass criteria</td><td><a href="scenarios.html">Scenarios</a></td></tr>
+    <tr><td>GA Requirements</td><td><span class="tbd">Public link TBD</span></td></tr>
+    <tr><td>Rules of the Road</td><td><span class="tbd">Link TBD</span> (maintained by the HTE community)</td></tr>
+    <tr><td>CMS patient matching proposal (v3.2.2)</td><td>Pinned in the identity verification and authentication channel on the CMS Health Tech Ecosystem Slack</td></tr>
+    <tr><td>National Provider Directory specifications</td><td>Pinned in the provider directory channel on the CMS Health Tech Ecosystem Slack</td></tr>
+    <tr><td>Synthetic test patients</td><td><span class="tbd">TBD</span></td></tr>
+  </tbody>
+</table></div>
+
+<h2 id="paths">Pick your path</h2>
+<div class="paths">
+  <a class="path" href="network-operators.html"><b>Network operators</b><span>Run the network-level scenarios with other CMS aligned networks.</span><em>Start here →</em></a>
+  <a class="path" href="participants-guide.html#providers"><b>Providers</b><span>Respond to treatment, patient, payer, and quality queries.</span><em>Start here →</em></a>
+  <a class="path" href="participants-guide.html#ehr-vendors"><b>EHR vendors</b><span>Build the technical side providers rely on.</span><em>Start here →</em></a>
+  <a class="path" href="participants-guide.html#payers"><b>Payers</b><span>Share claims data and query for clinical and quality data.</span><em>Start here →</em></a>
+  <a class="path" href="participants-guide.html#apps"><b>Patient-facing apps</b><span>Register, verify identity, and query on a patient's behalf.</span><em>Start here →</em></a>
+  <a class="path" href="observers.html"><b>Observers</b><span>Follow along, and read what people found.</span><em>Start here →</em></a>
+</div>
+
+<h2 id="sharing">Sharing what you found</h2>
+<p>Everyone is invited to write a short experience report: what you tried, what worked, what was hard, and what you'd change. The <a href="share.html">Share your experience</a> page explains how. Reports are public, credited with the name and organization you give, or anonymous.</p>
+
+</div></main>
+<script src="site.js"></script>
+</body>
+</html>

@@ -1,0 +1,154 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Scenarios | CMS Aligned Networks Connectathon</title>
+<link rel="stylesheet" href="site.css">
+</head>
+<body>
+<main class="page"><div class="doc">
+<div class="crumb"><a href="index.html">Connectathon</a> / Scenarios</div>
+<h1>Scenarios</h1>
+<p class="lede">Each scenario tests one requirement from the "Requirements for all Networks" section of the GA Requirements. Run them in pairs, between two CMS aligned networks, and record every run.</p>
+<div class="notice"><p>Exact message formats, endpoints, and test patient data are <span class="tbd">TBD</span> and will be published with the test tools. Pass criteria below come directly from the GA requirement text.</p></div>
+
+<h2 id="minimum">Minimum scenarios</h2>
+
+<section class="scenario" id="patient-matching">
+  <span class="tag">Minimum</span>
+  <h3>N1 Patient matching</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Patient Matching: incorporate CMS-approved patient matching logic on a CMS aligned network.</dd>
+    <dt>What happens</dt><dd>Network A sends a query for a synthetic patient to Network B using different combinations of identifying data from the CMS patient matching proposal (v3.2.2).</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>A query that matches under any of the 27 combinations gets a response from Network B, subject to applicable law.</li>
+      <li>A query that matches no combination does not return another person's data.</li>
+    </ul></dd>
+    <dt>Needs</dt><dd>Synthetic patients and the 27 combinations (<span class="tbd">test data TBD</span>).</dd>
+  </dl>
+</section>
+
+<section class="scenario" id="purpose-of-use">
+  <span class="tag">Minimum</span>
+  <h3>N2 Purpose of Use handling</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Purpose of Use: handle purpose of use and respond to requests for patient access, treatment, payment, and operations.</dd>
+    <dt>What happens</dt><dd>Network A sends one query per purpose using the HL7 Purpose of Use codes: PATRQT (patient access), TREAT (treatment), HPAYMT (payment), HOPERAT (operations), and HQUALIMP (quality improvement).</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>The declared Purpose of Use travels with the request to the downstream system.</li>
+      <li>Network B applies the disclosure rules for that purpose and responds accordingly.</li>
+      <li>A request with no declared Purpose of Use is rejected.</li>
+    </ul></dd>
+  </dl>
+</section>
+
+<section class="scenario" id="dcr">
+  <span class="tag">Minimum</span>
+  <h3>N3 Dynamic Client Registration</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Dynamic Client Registration: support Dynamic Client Registration using CMS-approved software statements.</dd>
+    <dt>What happens</dt><dd>A client registers with Network A, then registers with Network B using the same credentials, once with a CMS-signed software statement (Medicare App Library app) and once with a UDAP software statement (other participant type).</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>Both networks accept a valid CMS-signed software statement for Medicare App Library apps.</li>
+      <li>Both networks accept a valid UDAP software statement for all other participant types.</li>
+      <li>The client is accepted by the second network without redundant onboarding or duplicate trust requirements.</li>
+      <li>An invalid or unsigned statement is rejected.</li>
+    </ul></dd>
+    <dt>Note</dt><dd>Manual registration was allowed only through October 1, 2026. Dynamic Client Registration is now the primary onboarding mechanism.</dd>
+  </dl>
+</section>
+
+<section class="scenario" id="data-querying">
+  <span class="tag">Minimum</span>
+  <h3>N4 Data querying, structured and unstructured</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Data Querying: respond to or facilitate response to queries with all data requested, subject to HIPAA minimum necessary and applicable law.</dd>
+    <dt>What happens</dt><dd>Network A queries Network B for a synthetic patient whose record includes encounters, USCDI v3 data, a scanned PDF, and an image.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>The response includes structured data (USCDI v3) and unstructured artifacts (PDFs, scans, images), not structured data alone.</li>
+      <li>Everything responsive to the request and permitted for the declared Purpose of Use is returned.</li>
+    </ul></dd>
+  </dl>
+</section>
+
+<section class="scenario" id="audit">
+  <span class="tag">Minimum</span>
+  <h3>N5 Audit logging</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Auditability: networks produce audit logs for queries on their network showing where patient data was shared, with whom, when, and for which Purpose of Use, retained for at least 7 years.</dd>
+    <dt>What happens</dt><dd>After running N1 to N4, each network produces its audit log for the test queries.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>Each query has a log entry showing who accessed or received the data (organization level at minimum), when, and the declared Purpose of Use.</li>
+      <li>Participant-supplied access events appear in the network log.</li>
+      <li>The network states its retention period, which must be at least 7 years.</li>
+    </ul></dd>
+    <dt>Note</dt><dd>Retention is verified by attestation. It can't be tested in one day.</dd>
+  </dl>
+</section>
+
+<h2 id="advanced">Advanced scenarios</h2>
+
+<section class="scenario" id="rls">
+  <span class="tag adv">Advanced</span>
+  <h3>A1 Record location (RLS)</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>RLS: networks should participate in CMS-approved record location mechanisms that identify where records exist before broad queries.</dd>
+    <dt>Pass when</dt><dd>A request to the Record Locator Service from a patient, provider, payer, or value-based care organization returns the locations of a synthetic patient's records, and the follow-up queries go only to those locations.</dd>
+  </dl>
+</section>
+
+<section class="scenario" id="npd">
+  <span class="tag adv">Advanced</span>
+  <h3>A2 National Provider Directory publishing and usage metrics</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Provider Directory Publishing and Usage Metrics: publish the directory of providers on the network and usage stats by provider for each use case to the National Provider Directory.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>Participants, stable endpoints, and NPI-level metadata (or organization-level metadata if NPI is unavailable) are published to the directory.</li>
+      <li>Usage metrics are reported per provider for patient, treatment, payment, and operations queries.</li>
+      <li>A change to a provider's information flows through on the agreed update cadence, and incorrect information can be flagged.</li>
+    </ul></dd>
+    <dt>Needs</dt><dd>The NPD specifications pinned in the provider directory channel on the CMS Health Tech Ecosystem Slack.</dd>
+  </dl>
+</section>
+
+<section class="scenario" id="use-cases">
+  <span class="tag adv">Advanced</span>
+  <h3>A3 Response for patient, provider, and payer use cases</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Data Response for Use Cases: respond to queries for all three use cases (patient, provider, payer) if available on the network.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>A patient-initiated query using an IAL2 credential is answered, with no portal login and no extra identity steps.</li>
+      <li>A provider treatment query is answered with clinical and claims data.</li>
+      <li>A payer query for clinical data supporting a claim from the last 60 days is answered by a query response, not a proactive push.</li>
+      <li>No use case adds friction, delay, or special process for the requester.</li>
+    </ul></dd>
+  </dl>
+</section>
+
+<section class="scenario" id="restrictions">
+  <span class="tag adv">Advanced</span>
+  <h3>A4 Honoring disclosure restrictions</h3>
+  <dl>
+    <dt>GA requirement</dt><dd>Data Querying: networks must honor agreed-upon restrictions on disclosure (for example, 45 CFR 164.522, including out-of-pocket payment restrictions).</dd>
+    <dt>Pass when</dt><dd>For a synthetic patient with a restriction on file, a payment or operations query does not return the restricted data, while the same patient's other data is returned normally.</dd>
+  </dl>
+</section>
+
+<h2 id="out-of-scope">Not tested at the event</h2>
+<ul>
+  <li><strong>HITRUST certification.</strong> Required of every CMS aligned network. Confirmed by attestation, not by a test run.</li>
+  <li><strong>Rules of the Road.</strong> Maintained by the HTE community. Networks are expected to adhere to them, but there's no scenario for this.</li>
+  <li><strong>Electronic personal representative authentication.</strong> Not solved at the network layer in the current GA. Participants keep using their existing HIPAA-compliant processes.</li>
+</ul>
+</div></main>
+<script src="site.js"></script>
+</body>
+</html>
