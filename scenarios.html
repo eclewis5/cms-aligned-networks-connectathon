@@ -242,6 +242,68 @@
   </dl>
 </section>
 
+<section class="scenario" id="intranetwork">
+  <span class="tag adv">Advanced</span>
+  <h3>A5 Intranetwork query (Pathway 1)</h3>
+  <dl>
+    <dt>Spec</dt><dd>§5.1 Pathway 1, Intranetwork. §4.1 Respond to queries for data holders on the network. §4.2 Vouch for participants in good standing.</dd>
+    <dt>What happens</dt><dd>A requester sends an authorized query to a network for a synthetic patient whose data is held by a data holder that contracted directly with that network as its home network. Run it with a requester on the same network, and again with one from another network.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>The network responds to the authorized query for any data holder on the network, across the use cases that its participants engage in (§5.1, §4.1).</li>
+      <li>The network does not decline only because the requester's home network is different (§4.1).</li>
+      <li>When another network or NPD asks, the network reports the requester's good standing, or lack of it, and reports a suspended or flagged participant as not in good standing (§4.2).</li>
+    </ul></dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>The network does not claim to vouch for a participant's legal compliance. It reports operational status only (§4.2).</li>
+    </ul></dd>
+  </dl>
+</section>
+
+<section class="scenario" id="targeted-query">
+  <span class="tag adv">Advanced</span>
+  <h3>A6 Targeted query against an NPD endpoint (Pathway 3)</h3>
+  <dl>
+    <dt>Spec</dt><dd>§5.3 Pathway 3, Targeted Queries Against NPD. §10 (endpoints published in a form that supports queries by NPI). §8 Authentication and Authorization. §9.3 Purpose of Use.</dd>
+    <dt>What happens</dt><dd>A connector with a reason to think the patient has data at a specific endpoint (for example, a payer that received a claim from that provider) looks up the endpoint in NPD by NPI, then queries it directly, without using RLS discovery.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>The endpoint is listed in NPD, and the connector finds it by NPI or an equivalent identifier (§5.3, §10).</li>
+      <li>The connector has direct query rights under HIPAA right of access, a treatment, payment, or operations purpose, or other legal authority, and the request declares its purpose of use (§5.3, §9.3).</li>
+      <li>The endpoint authenticates and authorizes the request in the usual way, and does not require portal login (§8).</li>
+    </ul></dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>The query returns only data the declared purpose and granted scopes allow.</li>
+    </ul></dd>
+    <dt>Scope limits</dt>
+    <dd><ul>
+      <li>The network is not in the query path, so the network produces no audit log and applies no rate limit for this pathway. The data holder's own HIPAA audit duties and endpoint-level controls apply instead (§5.3, §11).</li>
+      <li>How to stop endpoint-spamming under this pathway is an open question (Appendix A, A2).</li>
+      <li>Business Associate Agreements may still be needed, so confirm your obligations under HIPAA (§13).</li>
+    </ul></dd>
+  </dl>
+</section>
+
+<section class="scenario" id="presumptive-eligibility">
+  <span class="tag adv">Advanced</span>
+  <h3>A7 Presumptive eligibility and suspension</h3>
+  <dl>
+    <dt>Spec</dt><dd>§7.2 Presumptive Eligibility. §4.2 and §4.3 (good standing). Run it after N3.</dd>
+    <dt>What happens</dt><dd>A client onboarded on its home network is allowed to operate on Network B. The home network then downgrades the client's good standing, or Network B suspends the client for cause, and the test checks what happens next.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>Network B lets a participant operate for a default 90-day presumptive eligibility period without redundant onboarding, once the participant meets its trust requirements, works in production, and is in good standing on its home network (§7.2).</li>
+      <li>After 90 days, eligibility becomes ongoing recognition unless there is specific cause to suspend (§7.2).</li>
+      <li>Network B may suspend for cause, such as operational abuse, a security incident, or a good-standing downgrade on the home network (§7.2).</li>
+      <li>A network that suspends reports the suspension to NPD and to the home network (§7.2).</li>
+      <li>A participant that is suspended or flagged, or that fails a published operational health check, is reported as not in good standing (§4.2).</li>
+    </ul></dd>
+    <dt>Still open</dt><dd>The exact timeline and the handoff from home-network onboarding to presumptive eligibility are not yet specified (Appendix A, A5). The 90-day period can't be run in one day, so confirm it by attestation and test the suspension and reporting steps live.</dd>
+  </dl>
+</section>
+
 <h2 id="out-of-scope">Not tested at the event</h2>
 <ul>
   <li><strong>HITRUST certification (§13).</strong> Required of every CMS aligned network, scoped to the production environment that handles PHI. Confirmed by attestation, not by a test run.</li>
