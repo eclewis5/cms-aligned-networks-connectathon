@@ -10,8 +10,17 @@
 <main class="page"><div class="doc">
 <div class="crumb"><a href="index.html">Connectathon</a> / Scenarios</div>
 <h1>Scenarios</h1>
-<p class="lede">Each scenario tests one requirement from the "Requirements for all Networks" section of the GA Requirements. Run them in pairs, between two CMS aligned networks, and record every run.</p>
-<div class="notice"><p>Exact message formats, endpoints, and test patient data are <span class="tbd">TBD</span> and will be published with the test tools. Pass criteria below come directly from the GA requirement text.</p></div>
+<p class="lede">Each scenario tests one network requirement. Run them in pairs, between two CMS aligned networks, and record every run.</p>
+
+<div class="notice"><p>Requirements are taken from the <a href="https://ftrotter-gov.github.io/CMS_Aligned_Network_Specification/">CMS-Aligned Network Specification</a> (can-spec/0.6, an editor's draft), cited below as "§". Where the specification and the CMS Interoperability Framework differ, the Framework controls. Message formats, endpoints, and test patient data are <span class="tbd">TBD</span> and will be published with the test tools.</p></div>
+
+<h2 id="how-to-read">How to read a scenario</h2>
+<ul>
+  <li><strong>Spec</strong> names the specification sections the scenario tests. Read them first.</li>
+  <li><strong>Pass when</strong> lists what the specification requires. A scenario passes only if every item is met.</li>
+  <li><strong>Also check at the event</strong> lists things we look at to make the test useful. They are reasonable expectations, not stated in the specification word for word.</li>
+  <li>Several parts of the specification are still open. Where a scenario touches one, it says so, and the result is recorded as a finding rather than a failure.</li>
+</ul>
 
 <h2 id="minimum">Minimum scenarios</h2>
 
@@ -19,14 +28,21 @@
   <span class="tag">Minimum</span>
   <h3>N1 Patient matching</h3>
   <dl>
-    <dt>GA requirement</dt><dd>Patient Matching: incorporate CMS-approved patient matching logic on a CMS aligned network.</dd>
-    <dt>What happens</dt><dd>Network A sends a query for a synthetic patient to Network B using different combinations of identifying data from the CMS patient matching proposal (v3.2.2).</dd>
+    <dt>Spec</dt><dd>§6 Patient Matching. §5.2 Pathway 2, RLS Network Search ($match). The field list and combination matrix are in the CMS Patient Matching Proposal (v3.4.0), which the specification incorporates by reference.</dd>
+    <dt>What happens</dt><dd>Network A sends a FHIR Patient <code>$match</code> request for a synthetic patient to Network B's RLS endpoint. Repeat with different combinations of identifying data from the proposal, including combinations that should match and ones that should not.</dd>
+    <dt>How $match works</dt><dd>The requester submits a full or partial Patient resource. The responder returns a Bundle of candidate Patient records, ordered by likelihood, each with a match score (0 to 1) and a match grade (certain, probable, or possible). The optional <code>onlyCertainMatches</code> parameter limits results to high-confidence matches, and <code>count</code> caps the number of candidates.</dd>
     <dt>Pass when</dt>
     <dd><ul>
-      <li>A query that matches under any of the 27 combinations gets a response from Network B, subject to applicable law.</li>
-      <li>A query that matches no combination does not return another person's data.</li>
+      <li>Network B applies the CMS-approved matching logic and responds when the query matches under any specified field combination (§6).</li>
+      <li>Authorization is checked as well. A match alone does not oblige Network B to respond if authorization has not been granted (§6).</li>
+      <li>Network B accepts the authenticated <code>$match</code> request at the endpoint published in NPD (§5.2).</li>
     </ul></dd>
-    <dt>Needs</dt><dd>Synthetic patients and the 27 combinations (<span class="tbd">test data TBD</span>).</dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>A query that matches no combination returns no other person's data.</li>
+      <li>The response is a valid $match Bundle with scores and match grades.</li>
+    </ul></dd>
+    <dt>Needs</dt><dd>Synthetic patients and the field combinations (<span class="tbd">test data TBD</span>).</dd>
   </dl>
 </section>
 
@@ -34,13 +50,30 @@
   <span class="tag">Minimum</span>
   <h3>N2 Purpose of Use handling</h3>
   <dl>
-    <dt>GA requirement</dt><dd>Purpose of Use: handle purpose of use and respond to requests for patient access, treatment, payment, and operations.</dd>
-    <dt>What happens</dt><dd>Network A sends one query per purpose using the HL7 Purpose of Use codes: PATRQT (patient access), TREAT (treatment), HPAYMT (payment), HOPERAT (operations), and HQUALIMP (quality improvement).</dd>
+    <dt>Spec</dt><dd>§9.3 Purpose of Use Propagation. §8.1.2 (patient access request carries PATRQT). §8.2.1 (B2B requests carry purpose of use in the <code>hl7-b2b</code> extension).</dd>
+    <dt>What happens</dt><dd>Network A sends one query per purpose using the HL7 Purpose of Use codes below. Patient access queries carry the code in the <code>cms_smart</code> extension. Provider and payer queries carry it in the <code>hl7-b2b</code> extension.</dd>
+    <dt>Required codes</dt>
+    <dd><div class="table-wrap"><table>
+      <thead><tr><th>Code</th><th>Meaning</th><th>Use case</th></tr></thead>
+      <tbody>
+        <tr><td>PATRQT</td><td>Patient request</td><td>Patient access</td></tr>
+        <tr><td>TREAT</td><td>Treatment</td><td>Treatment</td></tr>
+        <tr><td>HPAYMT</td><td>Healthcare payment</td><td>Payment, including claims</td></tr>
+        <tr><td>CLMATTCH</td><td>Claim attachment</td><td>Claim attachment within payment</td></tr>
+        <tr><td>HOPERAT</td><td>Healthcare operations</td><td>Health care operations</td></tr>
+        <tr><td>HQUALIMP</td><td>Healthcare quality improvement</td><td>Quality measure reporting within operations</td></tr>
+      </tbody>
+    </table></div></dd>
     <dt>Pass when</dt>
     <dd><ul>
-      <li>The declared Purpose of Use travels with the request to the downstream system.</li>
-      <li>Network B applies the disclosure rules for that purpose and responds accordingly.</li>
-      <li>A request with no declared Purpose of Use is rejected.</li>
+      <li>Network B supports all six codes and applies the correct disclosure rules to each category (§9.3).</li>
+      <li>The declared purpose of use travels with the request to downstream systems (§9.3).</li>
+      <li>When the requester is trusted and the purpose is properly declared, neither Network B nor its participants add further authorization requirements (§9.3).</li>
+      <li>A patient's restrictions on which data categories an app can access are still honored, and they take precedence (§9.3, §8.1).</li>
+    </ul></dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>A request with no declared purpose of use is rejected. The specification says every request must declare one (§9.3).</li>
     </ul></dd>
   </dl>
 </section>
@@ -49,16 +82,23 @@
   <span class="tag">Minimum</span>
   <h3>N3 Dynamic Client Registration</h3>
   <dl>
-    <dt>GA requirement</dt><dd>Dynamic Client Registration: support Dynamic Client Registration using CMS-approved software statements.</dd>
-    <dt>What happens</dt><dd>A client registers with Network A, then registers with Network B using the same credentials, once with a CMS-signed software statement (Medicare App Library app) and once with a UDAP software statement (other participant type).</dd>
+    <dt>Spec</dt><dd>§7.1 Dynamic Registration. §7.2 Presumptive Eligibility. §4.2 and §4.3 (good standing, no duplicate trust gating). Terminology for Software Statement (CMS-signed) and (UDAP) in §2.</dd>
+    <dt>What happens</dt><dd>A client that is onboarded and in good standing on a home network registers with Network A, then with Network B, using the same credentials. Registration uses RFC 7591: the client sends a signed software statement to the <code>/register</code> endpoint as the <code>software_statement</code> parameter. Test with a CMS-signed software statement.</dd>
+    <dt>About CMS-signed statements</dt><dd>A CMS-signed software statement is a short-lived JWT (for example, 24-hour lifetime) signed by CMS. It asserts the client's status in a CMS registry and binds it to a verified <code>jwks_uri</code>. Today CMS's firmest commitment is the Medicare App Library for patient-facing apps. Use a Medicare App Library app or a CMS test statement (<span class="tbd">test issuer TBD</span>).</dd>
     <dt>Pass when</dt>
     <dd><ul>
-      <li>Both networks accept a valid CMS-signed software statement for Medicare App Library apps.</li>
-      <li>Both networks accept a valid UDAP software statement for all other participant types.</li>
-      <li>The client is accepted by the second network without redundant onboarding or duplicate trust requirements.</li>
-      <li>An invalid or unsigned statement is rejected.</li>
+      <li>Both networks accept a valid CMS-signed software statement as sufficient for registration, with no additional per-network vetting (§7.1).</li>
+      <li>Network B registers the client without redundant onboarding or duplicate trust requirements, relying on the home network's good-standing report and the federal trust signals (§4.3, §7.1).</li>
+      <li>Network B lets the client operate under presumptive eligibility, 90 days by default, when the client has met its trust requirements, works in production, and is in good standing on its home network (§7.2).</li>
+      <li>Only operational coordination is requested (abuse contacts, rate limits, support channels) (§7.1).</li>
     </ul></dd>
-    <dt>Note</dt><dd>Manual registration was allowed only through October 1, 2026. Dynamic Client Registration is now the primary onboarding mechanism.</dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>An invalid, expired, or unsigned statement is rejected.</li>
+      <li>A client whose home network reports it as not in good standing is not accepted (§4.2).</li>
+    </ul></dd>
+    <dt>Still open</dt><dd>Whether UDAP X.509 software statements stay a required path, become optional, or are replaced by CMS-signed statements is pending Workgroup consensus (§7.1). If both networks support UDAP, you may also run this scenario with a UDAP software statement (HL7 FAST Security IG) and record it as a finding. The exact registration timeline and the handoff to presumptive eligibility are not yet specified (Appendix A, A5).</dd>
+    <dt>Note</dt><dd>Manual registration was allowed only through October 1, 2026. All participants must now support dynamic registration (§7.1).</dd>
   </dl>
 </section>
 
@@ -66,12 +106,20 @@
   <span class="tag">Minimum</span>
   <h3>N4 Data querying, structured and unstructured</h3>
   <dl>
-    <dt>GA requirement</dt><dd>Data Querying: respond to or facilitate response to queries with all data requested, subject to HIPAA minimum necessary and applicable law.</dd>
-    <dt>What happens</dt><dd>Network A queries Network B for a synthetic patient whose record includes encounters, USCDI v3 data, a scanned PDF, and an image.</dd>
+    <dt>Spec</dt><dd>§9.1 Respond Completely. §3.3 FHIR API Access. §3.4 Chart Notes and Clinical Documents. §4.1 Respond to queries for data holders on the network.</dd>
+    <dt>What happens</dt><dd>Network A queries Network B for a synthetic patient whose record includes encounters, USCDI v3 data, a scanned PDF, and an image. Run it after a successful N1 match, and for the declared purpose of use of your choice.</dd>
     <dt>Pass when</dt>
     <dd><ul>
-      <li>The response includes structured data (USCDI v3) and unstructured artifacts (PDFs, scans, images), not structured data alone.</li>
-      <li>Everything responsive to the request and permitted for the declared Purpose of Use is returned.</li>
+      <li>The response includes all relevant data held for the patient within the use case, structured and unstructured (§9.1).</li>
+      <li>Structured data meets USCDI v3 (or later) and is served through FHIR APIs that follow HL7 US Core, with a complete and valid CapabilityStatement (§3.3). Labs are coded in LOINC, medications in RxNorm, and conditions in SNOMED CT.</li>
+      <li>Clinical documents (such as radiology reports, scanned labs, and external specialist notes) come back in human-readable formats (PDF, TIFF, or JPG) as FHIR attachments (§3.4).</li>
+      <li>Network B does not decline to respond only because the query came from a participant whose home network is different (§4.1).</li>
+    </ul></dd>
+    <dt>What a response may contain</dt><dd>USCDI v3 is the set of data a network and its data holders must be able to return. It is not a promise that every element comes back on every call. The actual response depends on the specific query (a MedicationRequest search returns only medications), the scopes granted by the data holder's authorization server, and any limit the use case carries (a payer is limited to clinical data supporting claims from the last 60 days) (§9.1).</dd>
+    <dt>Should, not must</dt><dd>Faxes (a PDF copy where one exists) and ambient listening recordings should be returned where they exist and a standard exchange mechanism is available. There is no standard for ambient recordings yet, so don't record a missing recording as a failure (§3.4, §9.1).</dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>The query does not hit a dead end. Every use case should have a way to a response (§9.1).</li>
     </ul></dd>
   </dl>
 </section>
@@ -80,15 +128,25 @@
   <span class="tag">Minimum</span>
   <h3>N5 Audit logging</h3>
   <dl>
-    <dt>GA requirement</dt><dd>Auditability: networks produce audit logs for queries on their network showing where patient data was shared, with whom, when, and for which Purpose of Use, retained for at least 7 years.</dd>
-    <dt>What happens</dt><dd>After running N1 to N4, each network produces its audit log for the test queries.</dd>
+    <dt>Spec</dt><dd>§11 Audit Logging, including the IAS Audit Log API Specification (v1.0, February 2026).</dd>
+    <dt>What happens</dt><dd>After running N1 to N4, each network produces its audit log for the test queries. A home network with a patient-facing app then shows the app the audit information for that patient.</dd>
     <dt>Pass when</dt>
     <dd><ul>
-      <li>Each query has a log entry showing who accessed or received the data (organization level at minimum), when, and the declared Purpose of Use.</li>
-      <li>Participant-supplied access events appear in the network log.</li>
-      <li>The network states its retention period, which must be at least 7 years.</li>
+      <li>Each network-mediated query has a log entry showing who accessed the data, when, the declared purpose of use, and which organizations were involved (§11).</li>
+      <li>Logs are at the organization level at minimum (§11).</li>
+      <li>The network states a retention period of at least 7 years, or longer where applicable law requires (45 CFR 164.530(j)) (§11).</li>
+      <li>A home network serving patient-facing apps makes audit logs available to those apps through the IAS Audit Log API, which uses FHIR AuditEvent resources and IAL2 patient authentication (§11).</li>
     </ul></dd>
-    <dt>Note</dt><dd>Retention is verified by attestation. It can't be tested in one day.</dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>EHRs that facilitate the test queries produce audit data under the same obligations as the network routing through them (§11).</li>
+    </ul></dd>
+    <dt>Scope limits</dt>
+    <dd><ul>
+      <li>Patient-facing audit covers network-mediated queries, meaning Pathways 1 and 2. Direct queries to an NPD endpoint under Pathway 3 are excluded, because the network never sees them (§11).</li>
+      <li>Sharing audit events between networks is not in scope. A home network only serves the apps it onboarded (§11).</li>
+      <li>Retention is verified by attestation. It can't be tested in one day.</li>
+    </ul></dd>
   </dl>
 </section>
 
@@ -98,8 +156,22 @@
   <span class="tag adv">Advanced</span>
   <h3>A1 Record location (RLS)</h3>
   <dl>
-    <dt>GA requirement</dt><dd>RLS: networks should participate in CMS-approved record location mechanisms that identify where records exist before broad queries.</dd>
-    <dt>Pass when</dt><dd>A request to the Record Locator Service from a patient, provider, payer, or value-based care organization returns the locations of a synthetic patient's records, and the follow-up queries go only to those locations.</dd>
+    <dt>Spec</dt><dd>§5.2 Record Locator Service and Pathway 2. §8.1.1 Required Precondition: Network-Mediated Record Location.</dd>
+    <dt>What happens</dt><dd>A requester sends a record-location request to Network B's RLS endpoint for a synthetic patient. For patient access, the request comes from a Medicare App Library app carrying a CMS-signed software statement and an IAL2 patient identity token from a CMS-approved identity provider.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>Network B's RLS endpoint is the one published in NPD, and it accepts authenticated $match requests from other CMS-aligned networks (§5.2).</li>
+      <li>For patient access, Network B processes the request on app authentication and IAL2 identity alone, subject to patient matching, applicable law, and security controls. The patient does not interact with the network or know which organizations hold their records (§8.1.1).</li>
+      <li>Network B responds for the data holders it represents, with enough information for the app to go on and retrieve data (§8.1.1).</li>
+      <li>Patient discovery and patient access do not depend on a bilateral agreement. Network B may require one for provider and payer queries (§5.2).</li>
+      <li>Record location can be started by a patient, provider, payer, or value-based care organization (§5.2).</li>
+    </ul></dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>Follow-up queries go only to the locations the response identifies.</li>
+    </ul></dd>
+    <dt>Still open</dt><dd>The wire profile of the RLS endpoint, including transport, authentication, and payload, is not yet fixed (Appendix A, A1). Retrieval can be federated (each responder serves its own data) or brokered (a network broker aggregates). Both are conformant. Brokered retrieval has no wire profile yet (A1b), so record what you used.</dd>
+    <dt>Note</dt><dd>The specification lists this as a MUST for networks (§3.2, §5.2). It is shown under Advanced here only to keep the first day manageable.</dd>
   </dl>
 </section>
 
@@ -107,14 +179,16 @@
   <span class="tag adv">Advanced</span>
   <h3>A2 National Provider Directory publishing and usage metrics</h3>
   <dl>
-    <dt>GA requirement</dt><dd>Provider Directory Publishing and Usage Metrics: publish the directory of providers on the network and usage stats by provider for each use case to the National Provider Directory.</dd>
+    <dt>Spec</dt><dd>§10 National Provider Directory Publication. §5.3 Pathway 3, Targeted Queries Against NPD. The structure, formats, and data elements are in the HTE Data Release Specifications.</dd>
+    <dt>What happens</dt><dd>The network publishes to NPD, and a second network or the test tool reads the listing back and uses it for a targeted query.</dd>
     <dt>Pass when</dt>
     <dd><ul>
-      <li>Participants, stable endpoints, and NPI-level metadata (or organization-level metadata if NPI is unavailable) are published to the directory.</li>
-      <li>Usage metrics are reported per provider for patient, treatment, payment, and operations queries.</li>
-      <li>A change to a provider's information flows through on the agreed update cadence, and incorrect information can be flagged.</li>
+      <li>The network has published its onboarded participants (apps, providers, payers, delegated tech solutions), its participants' endpoints in a form that supports targeted queries by NPI or an equivalent identifier, and its inter-network connections (§10, §5.3).</li>
+      <li>Usage metrics are published by participant and by use case (§10).</li>
+      <li>A network that onboards organizations, not individual practitioners, publishes the organization's NPI with cross-references to affiliated practitioners' NPIs where known. Where it has no affiliation data, it says so in the record (§10).</li>
+      <li>The listing can be read by any network, auditor, or participant to confirm an actor's listing and credentials (§10).</li>
     </ul></dd>
-    <dt>Needs</dt><dd>The NPD specifications pinned in the provider directory channel on the CMS Health Tech Ecosystem Slack.</dd>
+    <dt>Still open</dt><dd>Trust-anchor metadata depends on the UDAP decision in §7.1 and has no concrete obligation yet (§10). The update cadence comes from the CMS Interoperability Framework. NPD has no ingestion API, so networks currently submit updates as flat files, and routine publishing at scale can't be met until one exists (Appendix A, A7).</dd>
   </dl>
 </section>
 
@@ -122,14 +196,28 @@
   <span class="tag adv">Advanced</span>
   <h3>A3 Response for patient, provider, and payer use cases</h3>
   <dl>
-    <dt>GA requirement</dt><dd>Data Response for Use Cases: respond to queries for all three use cases (patient, provider, payer) if available on the network.</dd>
-    <dt>Pass when</dt>
+    <dt>Spec</dt><dd>§9.2 Use Case Coverage. §8.1 Patient Access (B2C). §8.2 Provider and Payer Access (B2B). §9.1 (no use case becomes a dead end).</dd>
+    <dt>What happens</dt><dd>Run one query per use case the network supports: patient access, provider treatment, and payer. If your network's participants engage in a use case, the network must support it (§9.2).</dd>
+    <dt>Pass when: patient access</dt>
     <dd><ul>
-      <li>A patient-initiated query using an IAL2 credential is answered, with no portal login and no extra identity steps.</li>
-      <li>A provider treatment query is answered with clinical and claims data.</li>
-      <li>A payer query for clinical data supporting a claim from the last 60 days is answered by a query response, not a proactive push.</li>
-      <li>No use case adds friction, delay, or special process for the requester.</li>
+      <li>A CMS-recognized app in good standing, acting for an IAL2-verified patient, gets patient-access tokens from data holders and retrieves data with no provider portal login and no separate developer onboarding at each data holder (§8.1).</li>
+      <li>The app authenticates with a private key JWT (RS384 or ES384) and the request carries the IAL2 id_token, a consent bundle, and purpose of use PATRQT. The server issues an authorization code with no login screen and no per-data-holder consent screen (§8.1, §8.1.3.1).</li>
+      <li>The authorization request uses <code>POST /authorize</code>, not GET. The token exchange uses PKCE with S256 (§8.1).</li>
+      <li>The data holder refuses an id_token whose <code>auth_time</code> is more than 300 seconds old, and refuses a reused <code>jti</code> and <code>iss</code> pair. Access tokens last no more than one hour, and refresh tokens renew on a rolling 90-day basis (§8.1.5).</li>
     </ul></dd>
+    <dt>Pass when: provider treatment and payer</dt>
+    <dd><ul>
+      <li>Access follows SMART Backend Services with the HL7 FAST B2B profile. The requester signs a client assertion lasting no more than 5 minutes, includes the <code>hl7-b2b</code> extension with <code>organization_id</code> and <code>purpose_of_use</code>, and sends <code>udap=1</code>. The data holder returns an access token lasting no more than 60 minutes, with no refresh token (§8.2, §8.2.1).</li>
+      <li>A provider treatment query is answered with clinical and claims data (§9.2).</li>
+      <li>A payer query for clinical data supporting a claim from the last 60 days is answered as a query response, not a proactive push (§9.1, §9.2).</li>
+      <li>Payer quality measure queries (HQUALIMP) are answered (§9.2).</li>
+    </ul></dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>No use case adds friction, delay, or a special process for the requester (§9.1).</li>
+    </ul></dd>
+    <dt>Patient approval paths</dt><dd>The preferred path is the CMS-recognized app with IAL2 identity (Path 1). Network-level consolidated approval (Path 2) is allowed through December 31, 2026 and not after. The data holder-specific "July bridge" (Path 3) had to be sunset by November 1, 2026. By January 2027, test Path 1 only (§8.1.3). Networks and data holders must document which path they support (§8.1.4).</dd>
+    <dt>Still open</dt><dd>Prior authorization queries follow CMS-0057-F deadlines (§9.2). Credential rotation and retry policy for B2B are not specified (§8.2.1).</dd>
   </dl>
 </section>
 
@@ -138,14 +226,30 @@
   <h3>A4 Honoring disclosure restrictions</h3>
   <dl>
     <dt>GA requirement</dt><dd>Data Querying: networks must honor agreed-upon restrictions on disclosure (for example, 45 CFR 164.522, including out-of-pocket payment restrictions).</dd>
-    <dt>Pass when</dt><dd>For a synthetic patient with a restriction on file, a payment or operations query does not return the restricted data, while the same patient's other data is returned normally.</dd>
+    <dt>Spec</dt><dd>§9.3 (patient restrictions take precedence). §8.1.3.1, Sensitive and Restricted Data.</dd>
+    <dt>What happens</dt><dd>For a synthetic patient with a restriction on file, or an app request that carries no consent for Sensitive / Restricted Information, Network A sends a query that would otherwise return the restricted data.</dd>
+    <dt>Pass when</dt>
+    <dd><ul>
+      <li>A patient's restriction on the data categories an app can access is honored (§9.3).</li>
+      <li>If the app did not ask for consent to Sensitive / Restricted Information, the Consent resource says access is denied, and the restricted data is not returned. If the token request has no positive consent, the data holder may withhold it (§8.1.3.1).</li>
+      <li>If the app did convey positive consent, the data holder treats it as authorization to disclose, unless law prohibits disclosure (§8.1.3.1).</li>
+      <li>The patient's other data is returned normally.</li>
+    </ul></dd>
+    <dt>Also check at the event</dt>
+    <dd><ul>
+      <li>A payment or operations query does not return data restricted under 45 CFR 164.522. The specification does not cite this regulation, so it comes from the GA requirement above.</li>
+    </ul></dd>
   </dl>
 </section>
 
 <h2 id="out-of-scope">Not tested at the event</h2>
 <ul>
-  <li><strong>HITRUST certification.</strong> Required of every CMS aligned network. Confirmed by attestation, not by a test run.</li>
-  <li><strong>Rules of the Road.</strong> Maintained by the HTE community. Networks are expected to adhere to them, but there's no scenario for this.</li>
+  <li><strong>HITRUST certification (§13).</strong> Required of every CMS aligned network, scoped to the production environment that handles PHI. Confirmed by attestation, not by a test run.</li>
+  <li><strong>Rules of the Road (§16).</strong> Maintained by the HTE community. Networks are expected to adhere to them, but the attestation is still a placeholder in the specification and there's no scenario for it.</li>
+  <li><strong>Appointment and encounter notifications (§12).</strong> Deferred and not in scope for initial CMS-Aligned recognition.</li>
+  <li><strong>Fees and settlement (§14).</strong> Networks may not gate patient access with fees, and settlement is not appropriate for patient-directed access. Not testable in a run.</li>
+  <li><strong>Pathway 4, bilateral peering (§5.4).</strong> Optional, and outside the CMS-aligned obligations.</li>
+  <li><strong>Patient-contributed data (§9.4).</strong> Planned for a later phase, with write-side obligations not yet specified.</li>
   <li><strong>Electronic personal representative authentication.</strong> Not solved at the network layer in the current GA. Participants keep using their existing HIPAA-compliant processes.</li>
 </ul>
 </div></main>

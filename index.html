@@ -13,7 +13,7 @@
 
 <p class="lede">The CMS Aligned Networks Connectathon is an online event in <strong>January 2027</strong> (<span class="tbd">exact date and time TBD</span>) where networks, providers, EHR vendors, payers, and app developers test the network-level requirements of the CMS Health Tech Ecosystem (HTE) General Availability (GA) Requirements against each other, and tell us what they found.</p>
 
-<div class="notice"><p><strong>Draft status.</strong> Scenarios are based on the GA Requirements draft dated for the July milestone. They will be rechecked against the current GA document before the event.</p></div>
+<div class="notice"><p><strong>Draft status.</strong> Scenarios are based on the CMS-Aligned Network Specification (can-spec/0.6, an editor's draft) and the GA Requirements. They will be rechecked against the current GA document before the event.</p></div>
 
 <h2 id="how-it-works">How the event works</h2>
 <ul>
@@ -45,8 +45,8 @@
   <li><strong>One onboarding, accepted everywhere.</strong> Participants onboarded by one CMS aligned network must be accepted by the others without redundant onboarding. Networks may coordinate operations but must not add duplicate trust requirements.</li>
   <li><strong>Dynamic Client Registration is the default.</strong> The GA allows manual registration only through October 1, 2026. For this event, register clients dynamically.</li>
   <li><strong>Identity at IAL2 only.</strong> Patient-initiated queries use a CMS-approved IAL2 credential. No portal logins, and no extra identity steps beyond IAL2 token validation.</li>
-  <li><strong>Purpose of Use travels with every request.</strong> Every query declares one of the HL7 Purpose of Use codes: PATRQT, TREAT, HPAYMT, HOPERAT, or HQUALIMP.</li>
-  <li><strong>Patient matching uses the CMS-approved logic.</strong> If a query matches under any of the 27 combinations in the CMS patient matching proposal, the receiver must respond, subject to applicable law.</li>
+  <li><strong>Purpose of Use travels with every request.</strong> Every query declares one of the HL7 Purpose of Use codes: PATRQT, TREAT, HPAYMT, CLMATTCH, HOPERAT, or HQUALIMP.</li>
+  <li><strong>Patient matching uses the CMS-approved logic.</strong> If a query matches under any field combination in the CMS patient matching proposal, the receiver must respond, subject to applicable law.</li>
   <li><strong>Structured and unstructured data.</strong> Responses include USCDI v3 data and unstructured artifacts such as PDFs, scans, and images.</li>
   <li><strong>Law still applies.</strong> HIPAA and other applicable law govern every response. Withholding is allowed only where law permits it.</li>
 </ul>
@@ -76,7 +76,7 @@
     <tr><td>Every scenario, with pass criteria</td><td><a href="scenarios.html">Scenarios</a></td></tr>
     <tr><td>GA Requirements</td><td><span class="tbd">Public link TBD</span></td></tr>
     <tr><td>Rules of the Road</td><td><span class="tbd">Link TBD</span> (maintained by the HTE community)</td></tr>
-    <tr><td>CMS patient matching proposal (v3.2.2)</td><td>Pinned in the identity verification and authentication channel on the CMS Health Tech Ecosystem Slack</td></tr>
+    <tr><td>CMS patient matching proposal (v3.4.0)</td><td>Pinned in the identity verification and authentication channel on the CMS Health Tech Ecosystem Slack</td></tr>
     <tr><td>National Provider Directory specifications</td><td>Pinned in the provider directory channel on the CMS Health Tech Ecosystem Slack</td></tr>
     <tr><td>Synthetic test patients</td><td><span class="tbd">TBD</span></td></tr>
   </tbody>
