@@ -1,0 +1,90 @@
+name: "Register a patient-facing app"
+description: "Register a patient-facing app"
+title: "[App] "
+labels: ["registration", "type:app"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Registrations are public and appear in the participant directory after the organizers review them. Use synthetic data only.
+  - type: input
+    id: org
+    attributes:
+      label: "Organization"
+      description: "Your organization's name"
+    validations:
+      required: true
+  - type: input
+    id: component
+    attributes:
+      label: "App name"
+      description: "The app you are bringing"
+    validations:
+      required: true
+  - type: dropdown
+    id: library
+    attributes:
+      label: "Medicare App Library status"
+      description: "Whether the app is listed in the CMS Medicare App Library"
+      options:
+        - "Listed"
+        - "Applying"
+        - "Not listed"
+    validations:
+      required: true
+  - type: input
+    id: home
+    attributes:
+      label: "Home network"
+      description: "The CMS aligned network that onboarded your app, if any"
+    validations:
+      required: false
+  - type: input
+    id: howto
+    attributes:
+      label: "How to test"
+      description: "A URL, test build, or instructions for counterparts. Do not include credentials."
+      placeholder: "https://"
+    validations:
+      required: true
+  - type: input
+    id: csp
+    attributes:
+      label: "Identity provider for IAL2"
+      description: "The CMS-approved credential service provider you use, if any"
+    validations:
+      required: false
+  - type: dropdown
+    id: status
+    attributes:
+      label: "Status"
+      description: "How ready is your app?"
+      options:
+        - "Up and ready to test"
+        - "In progress"
+        - "Planned"
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: "Contact for pairing"
+      description: "A name plus a Slack handle or work email. This is public, so use a shared inbox or a Slack handle if you prefer."
+      placeholder: "Name, @slack-handle"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: "Notes"
+      description: "Anything partners should know, such as how testers can request access. Do not paste secrets or real patient information."
+    validations:
+      required: false
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: "Before you submit"
+      description: "This issue is public."
+      options:
+        - label: "I will use synthetic data only, and this registration contains no real health information, credentials, or secrets."
+          required: true

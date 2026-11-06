@@ -10,25 +10,39 @@
 <main class="page"><div class="doc">
 <div class="crumb"><a href="index.html">Connectathon</a> / Register</div>
 <h1>Register</h1>
-<p class="lede">Only software and networks register. Everyone else just joins the Zoom.</p>
-<div class="notice"><p>The submission method is <span class="tbd">TBD</span>. Collect the details below now so you're ready.</p></div>
+<p class="lede">Only software and networks register. Pick your participant type below. Observers and anyone else just join the Zoom.</p>
 
-<h2>What to prepare</h2>
+<div class="notice"><p><strong>Registrations are public.</strong> Each registration is a GitHub issue that anyone can read, and it needs a free GitHub account. Use synthetic data only. Don't enter real health information, credentials, or secrets. For contact, use a Slack handle or a shared inbox if you don't want a personal email shown.</p></div>
+
+<h2 id="choose">Choose your participant type</h2>
+<div class="paths">
+  <a class="path" href="https://github.com/eclewis5/cms-aligned-networks-connectathon/issues/new?template=register-network.yml"><b>Network</b><span>Routes and answers queries across CMS aligned networks.</span><em>Register →</em></a>
+  <a class="path" href="https://github.com/eclewis5/cms-aligned-networks-connectathon/issues/new?template=register-provider.yml"><b>Provider</b><span>A provider organization's endpoint.</span><em>Register →</em></a>
+  <a class="path" href="https://github.com/eclewis5/cms-aligned-networks-connectathon/issues/new?template=register-ehr-vendor.yml"><b>EHR vendor</b><span>An EHR product or system.</span><em>Register →</em></a>
+  <a class="path" href="https://github.com/eclewis5/cms-aligned-networks-connectathon/issues/new?template=register-payer.yml"><b>Payer</b><span>A payer endpoint for claims, benefits, and quality data.</span><em>Register →</em></a>
+  <a class="path" href="https://github.com/eclewis5/cms-aligned-networks-connectathon/issues/new?template=register-app.yml"><b>Patient-facing app</b><span>An app that queries on a patient's behalf.</span><em>Register →</em></a>
+</div>
+<p>Each button opens a short form for that type. Submit it once per component you bring. If you bring more than one, for example a network and an app, register each separately.</p>
+
+<h2 id="after">What happens next</h2>
+<ol>
+  <li>The organizers review your registration and add it to the <a href="directory.html">Participant directory</a>.</li>
+  <li>Update your registration by editing the issue, for example when your status changes from planned to up.</li>
+  <li>Find counterparts in the directory and pair up for the <a href="scenarios.html">scenarios</a>.</li>
+</ol>
+
+<h2 id="prepare">What to prepare</h2>
 <div class="table-wrap"><table>
-  <thead><tr><th>Field</th><th>What to give</th></tr></thead>
+  <thead><tr><th>Participant type</th><th>Have ready</th></tr></thead>
   <tbody>
-    <tr><td>Organization</td><td>Your organization's name</td></tr>
-    <tr><td>Role</td><td>Network, provider, EHR vendor, payer, or patient-facing app</td></tr>
-    <tr><td>Component name</td><td>What you're bringing, for example a network gateway or an app</td></tr>
-    <tr><td>Endpoint</td><td>The URL partners test against, or how testers reach it</td></tr>
-    <tr><td>Scenarios</td><td>Which <a href="scenarios.html">scenarios</a> you plan to run</td></tr>
-    <tr><td>Status</td><td>Up, in progress, or planned</td></tr>
-    <tr><td>Contact</td><td>A name and email or Slack handle for pairing</td></tr>
-    <tr><td>Notes</td><td>Anything partners should know, such as test patient identifiers</td></tr>
+    <tr><td>Network</td><td>Your <code>$match</code> (RLS) endpoint, your Dynamic Client Registration <code>/register</code> endpoint, the software statement types you accept, a FHIR base URL for data queries, and the <a href="scenarios.html">scenarios</a> you plan to run.</td></tr>
+    <tr><td>Provider</td><td>Your FHIR base URL or how testers reach it, your home network if you connect through one, and whether you respond to queries, send them, or both.</td></tr>
+    <tr><td>EHR vendor</td><td>The product you are bringing, its FHIR base URL, your home network if any, and whether you also publish to or validate against the National Provider Directory.</td></tr>
+    <tr><td>Payer</td><td>Your FHIR base URL, your home network if any, and which of claims and benefit queries, clinical data queries, and quality queries you take part in.</td></tr>
+    <tr><td>Patient-facing app</td><td>Your Medicare App Library status, how counterparts can test the app, and your home network and IAL2 identity provider if you have them.</td></tr>
   </tbody>
 </table></div>
-
-<p>Listings appear in the <a href="directory.html">Participant directory</a>. Don't list real patient information or credentials.</p>
+<p>Every registration also asks for your organization, component name, status (up, in progress, or planned), a contact for pairing, and any notes for partners.</p>
 </div></main>
 <script src="site.js"></script>
 </body>

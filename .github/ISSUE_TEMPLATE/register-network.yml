@@ -1,0 +1,107 @@
+name: "Register a network"
+description: "Register a CMS aligned network and its endpoints"
+title: "[Network] "
+labels: ["registration", "type:network"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Registrations are public and appear in the participant directory after the organizers review them. Use synthetic data only.
+  - type: input
+    id: org
+    attributes:
+      label: "Organization"
+      description: "Your organization's name"
+    validations:
+      required: true
+  - type: input
+    id: component
+    attributes:
+      label: "Network name"
+      description: "What you are bringing, for example your network gateway"
+    validations:
+      required: true
+  - type: input
+    id: match
+    attributes:
+      label: "$match / RLS endpoint"
+      description: "The URL partners send Patient $match requests to, as published in NPD"
+      placeholder: "https://"
+    validations:
+      required: true
+  - type: input
+    id: register
+    attributes:
+      label: "Dynamic Client Registration endpoint"
+      description: "The /register URL clients use"
+      placeholder: "https://"
+    validations:
+      required: true
+  - type: input
+    id: fhir
+    attributes:
+      label: "FHIR base URL for data queries"
+      description: "Where partners query for data, or how testers reach it"
+      placeholder: "https://"
+    validations:
+      required: false
+  - type: checkboxes
+    id: statements
+    attributes:
+      label: "Software statements you accept"
+      description: "Which software statement types your registration endpoint accepts"
+      options:
+        - label: "CMS-signed software statement"
+        - label: "UDAP software statement (if you support it)"
+  - type: checkboxes
+    id: scenarios
+    attributes:
+      label: "Scenarios you plan to run"
+      description: "Scenarios are described on the Scenarios page"
+      options:
+        - label: "N1 Patient matching"
+        - label: "N2 Purpose of Use handling"
+        - label: "N3 Dynamic Client Registration"
+        - label: "N4 Data querying, structured and unstructured"
+        - label: "N5 Audit logging"
+        - label: "A1 Record location (RLS)"
+        - label: "A2 National Provider Directory publishing and usage metrics"
+        - label: "A3 Response for patient, provider, and payer use cases"
+        - label: "A4 Honoring disclosure restrictions"
+        - label: "A5 Intranetwork query (Pathway 1)"
+        - label: "A6 Targeted query against an NPD endpoint (Pathway 3)"
+        - label: "A7 Presumptive eligibility and suspension"
+  - type: dropdown
+    id: status
+    attributes:
+      label: "Status"
+      description: "How ready is your network?"
+      options:
+        - "Up and ready to test"
+        - "In progress"
+        - "Planned"
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: "Contact for pairing"
+      description: "A name plus a Slack handle or work email. This is public, so use a shared inbox or a Slack handle if you prefer."
+      placeholder: "Name, @slack-handle"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: "Notes"
+      description: "Anything partners should know, such as how testers can request access. Do not paste secrets or real patient information."
+    validations:
+      required: false
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: "Before you submit"
+      description: "This issue is public."
+      options:
+        - label: "I will use synthetic data only, and this registration contains no real health information, credentials, or secrets."
+          required: true

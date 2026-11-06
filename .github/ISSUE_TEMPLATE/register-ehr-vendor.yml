@@ -1,0 +1,81 @@
+name: "Register an EHR vendor"
+description: "Register an EHR vendor system"
+title: "[EHR vendor] "
+labels: ["registration", "type:ehr-vendor"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Registrations are public and appear in the participant directory after the organizers review them. Use synthetic data only.
+  - type: input
+    id: org
+    attributes:
+      label: "Organization"
+      description: "Your company's name"
+    validations:
+      required: true
+  - type: input
+    id: component
+    attributes:
+      label: "Product name"
+      description: "The EHR product or system you are bringing"
+    validations:
+      required: true
+  - type: input
+    id: endpoint
+    attributes:
+      label: "Endpoint"
+      description: "The FHIR base URL partners test against, or how testers reach it"
+      placeholder: "https://"
+    validations:
+      required: true
+  - type: input
+    id: home
+    attributes:
+      label: "Home network"
+      description: "The CMS aligned network you connect through, or None if you bring your own endpoint"
+    validations:
+      required: true
+  - type: checkboxes
+    id: roles
+    attributes:
+      label: "What you will do"
+      description: ""
+      options:
+        - label: "Respond to queries (treatment, patient, payer, quality)"
+        - label: "Send queries"
+        - label: "Publish to or validate against the National Provider Directory"
+  - type: dropdown
+    id: status
+    attributes:
+      label: "Status"
+      description: "How ready is your system?"
+      options:
+        - "Up and ready to test"
+        - "In progress"
+        - "Planned"
+    validations:
+      required: true
+  - type: input
+    id: contact
+    attributes:
+      label: "Contact for pairing"
+      description: "A name plus a Slack handle or work email. This is public, so use a shared inbox or a Slack handle if you prefer."
+      placeholder: "Name, @slack-handle"
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: "Notes"
+      description: "Anything partners should know, such as how testers can request access. Do not paste secrets or real patient information."
+    validations:
+      required: false
+  - type: checkboxes
+    id: ack
+    attributes:
+      label: "Before you submit"
+      description: "This issue is public."
+      options:
+        - label: "I will use synthetic data only, and this registration contains no real health information, credentials, or secrets."
+          required: true
