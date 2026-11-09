@@ -1,17 +1,24 @@
 /* CMS Aligned Networks Connectathon: layout modeled on the SMART Health Check-in connectathon pages.
-   Design tokens are defined here so the site is fully self-contained. */
+   Design tokens are defined here so the site is fully self-contained.
+   Palette follows medicare.gov: teal primary, navy secondary, red accent. */
 :root {
-  --brand: #0b5cad;
-  --brand-dark: #08437f;
-  --brand-tint: #eaf2fb;
-  --fg-1: #14202e;
-  --fg-2: #3d4b5c;
-  --fg-3: #66768a;
-  --border: #d9e0e8;
+  --brand: #146a5d;
+  --brand-dark: #0e4a41;
+  --brand-tint: #e8f0ef;
+  --navy: #1e3c70;
+  --navy-dark: #152a4e;
+  --navy-tint: #e9ecf1;
+  --accent: #b20000;
+  --accent-tint: #f7e6e6;
+  --focus: #c97532;
+  --fg-1: #333333;
+  --fg-2: #404040;
+  --fg-3: #5a5a5a;
+  --border: #d9d9d9;
   --bg: #ffffff;
-  --bg-soft: #f5f7fa;
-  --warn-bg: #fff7e0;
-  --warn-border: #e8c76a;
+  --bg-soft: #f2f2f2;
+  --warn-bg: #e9ecf1;
+  --warn-border: #1e3c70;
   --font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   --fs-sm: 0.875rem; --fs-base: 1rem; --fs-md: 1.125rem; --fs-xl: 1.5rem; --fs-2xl: 2.125rem;
@@ -21,25 +28,28 @@
 }
 * { box-sizing: border-box; }
 body { margin: 0; font-family: var(--font-sans); font-size: var(--fs-base); line-height: var(--lh-normal); color: var(--fg-1); background: var(--bg); -webkit-font-smoothing: antialiased; }
-a { color: var(--brand); }
+a { color: var(--navy); }
+a:hover { color: var(--brand); }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 
 /* Site bar */
-.sitebar { border-bottom: 1px solid var(--border); background: var(--bg); position: sticky; top: 0; z-index: 10; }
+.sitebar { border-top: 6px solid var(--navy); border-bottom: 3px solid var(--brand); background: var(--bg); position: sticky; top: 0; z-index: 10; }
 .sitebar .inner { max-width: 1280px; margin: 0 auto; padding: 0 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; min-height: 56px; }
-.sitebar .brand { font-weight: 700; color: var(--fg-1); text-decoration: none; margin-right: auto; padding: 12px 0; }
+.sitebar .brand { font-weight: 700; color: var(--navy); text-decoration: none; margin-right: auto; padding: 12px 0; }
 .sitebar .brand span { color: var(--brand); }
 .sitebar nav { display: flex; flex-wrap: wrap; gap: 2px 4px; }
 .sitebar nav a { color: var(--fg-2); text-decoration: none; font-size: var(--fs-sm); padding: 8px 10px; border-radius: var(--radius-md); }
-.sitebar nav a:hover { background: var(--bg-soft); color: var(--brand); }
-.sitebar nav a[aria-current="page"] { color: var(--brand); font-weight: 600; background: var(--brand-tint); }
+.sitebar nav a:hover { background: var(--navy-tint); color: var(--navy); }
+.sitebar nav a[aria-current="page"] { color: #fff; font-weight: 600; background: var(--brand); }
 
 .page { max-width: 1280px; margin: 0 auto; padding: var(--space-5) 24px var(--space-8); }
 @media (max-width: 46rem) { .page { padding: var(--space-4) 16px var(--space-7); } }
 .crumb { font-size: var(--fs-sm); color: var(--fg-3); margin-bottom: var(--space-3); }
 .doc { max-width: 52rem; }
-.doc h1 { font-size: var(--fs-2xl); letter-spacing: -0.01em; line-height: var(--lh-tight); margin: 0 0 var(--space-4); text-wrap: balance; }
-.doc h2 { font-size: var(--fs-xl); letter-spacing: -0.01em; margin: var(--space-8) 0 var(--space-3); padding-top: var(--space-4); border-top: 1px solid var(--border); text-wrap: balance; scroll-margin-top: 80px; }
-.doc h3 { font-size: var(--fs-md); margin: var(--space-6) 0 var(--space-2); }
+.doc h1 { font-size: var(--fs-2xl); letter-spacing: -0.01em; line-height: var(--lh-tight); margin: 0 0 var(--space-4); text-wrap: balance; color: var(--navy); }
+.doc h1::after { content: ""; display: block; width: 56px; height: 4px; background: var(--accent); margin-top: var(--space-3); }
+.doc h2 { font-size: var(--fs-xl); letter-spacing: -0.01em; margin: var(--space-8) 0 var(--space-3); padding-top: var(--space-4); border-top: 2px solid var(--brand); text-wrap: balance; scroll-margin-top: 80px; color: var(--navy); }
+.doc h3 { font-size: var(--fs-md); margin: var(--space-6) 0 var(--space-2); color: var(--navy); }
 .doc p, .doc li { max-width: 44rem; }
 .doc li { margin: 4px 0; }
 .lede { font-size: var(--fs-md); color: var(--fg-2); }
@@ -48,34 +58,36 @@ code { font-family: var(--font-mono); font-size: 0.9em; background: var(--bg-sof
 
 /* TBD marker and notice */
 .tbd { display: inline-block; border: 1px dashed var(--fg-3); border-radius: 4px; padding: 0 6px; font-size: 0.9em; color: var(--fg-2); background: var(--bg-soft); }
-.notice { border: 1px solid var(--warn-border); background: var(--warn-bg); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin: var(--space-4) 0; max-width: 44rem; }
+.notice { border: 1px solid var(--warn-border); border-left: 6px solid var(--navy); background: var(--warn-bg); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); margin: var(--space-4) 0; max-width: 44rem; }
 .notice p { margin: 0; }
 
 /* Tables */
 .table-wrap { overflow-x: auto; margin: var(--space-4) 0; }
 table { border-collapse: collapse; width: 100%; font-size: var(--fs-sm); }
 th, td { text-align: left; vertical-align: top; padding: 10px 12px; border-bottom: 1px solid var(--border); }
-th { background: var(--bg-soft); font-weight: 600; white-space: nowrap; }
+th { background: var(--navy); color: #fff; font-weight: 600; white-space: nowrap; }
+tbody tr:nth-child(even) td { background: #fafafa; }
 td a { overflow-wrap: anywhere; }
 
 /* Pick your path */
 .paths { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-3); margin: var(--space-4) 0; max-width: none; }
-.paths a.path { display: block; border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); text-decoration: none; color: var(--fg-1); }
-.paths a.path:hover { border-color: var(--brand); }
-.paths a.path b { display: block; color: var(--brand); margin-bottom: 2px; }
+.paths a.path { display: block; border: 1px solid var(--border); border-top: 5px solid var(--brand); border-radius: var(--radius-md); padding: var(--space-3) var(--space-4); text-decoration: none; color: var(--fg-1); }
+.paths a.path:hover { border-color: var(--navy); background: var(--brand-tint); }
+.paths a.path b { display: block; color: var(--navy); margin-bottom: 2px; }
 .paths a.path span { display: block; font-size: var(--fs-sm); color: var(--fg-2); }
 .paths a.path em { display: block; margin-top: var(--space-2); font-style: normal; font-size: var(--fs-sm); font-weight: 600; color: var(--brand); }
 
 /* Scenario cards */
-.scenario { border: 1px solid var(--border); border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); margin: var(--space-4) 0; max-width: 52rem; }
+.scenario { border: 1px solid var(--border); border-left: 6px solid var(--brand); border-radius: var(--radius-md); padding: var(--space-4) var(--space-5); margin: var(--space-4) 0; max-width: 52rem; }
+.scenario:has(.tag.adv) { border-left-color: var(--navy); }
 .scenario h3 { margin: 0 0 var(--space-1); }
-.scenario .tag { display: inline-block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: var(--brand); background: var(--brand-tint); border-radius: 4px; padding: 1px 8px; margin-bottom: var(--space-2); }
-.scenario .tag.adv { color: var(--fg-2); background: var(--bg-soft); }
+.scenario .tag { display: inline-block; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; color: #fff; background: var(--brand); border-radius: 4px; padding: 1px 8px; margin-bottom: var(--space-2); }
+.scenario .tag.adv { color: #fff; background: var(--navy); }
 .scenario dl { margin: var(--space-3) 0 0; }
 .scenario dt { font-weight: 600; font-size: var(--fs-sm); color: var(--fg-3); margin-top: var(--space-3); text-transform: uppercase; letter-spacing: 0.03em; }
 .scenario dd { margin: 2px 0 0; }
 .scenario ul { margin: 4px 0; padding-left: 20px; }
 
 .status { font-weight: 600; }
-footer { border-top: 1px solid var(--border); color: var(--fg-3); font-size: var(--fs-sm); }
+footer { background: var(--navy); color: #fff; font-size: var(--fs-sm); margin-top: var(--space-6); }
 footer .inner { max-width: 1280px; margin: 0 auto; padding: var(--space-5) 24px; }
